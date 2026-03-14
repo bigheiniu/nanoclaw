@@ -112,10 +112,17 @@ function prepareAgentEnvironment(
   const extraPaths = [
     path.join(homedir, '.local', 'bin'),
     path.join(homedir, '.toolbox', 'bin'),
-    path.join(homedir, '.nvm', 'versions', 'node', process.version.slice(1), 'bin'),
+    path.join(
+      homedir,
+      '.nvm',
+      'versions',
+      'node',
+      process.version.slice(1),
+      'bin',
+    ),
     '/usr/local/bin',
     '/opt/homebrew/bin',
-  ].filter(p => fs.existsSync(p));
+  ].filter((p) => fs.existsSync(p));
   const fullPath = [...extraPaths, process.env.PATH || ''].join(':');
 
   // Symlink .claude into the group dir so the SDK picks up per-group settings
