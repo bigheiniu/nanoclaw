@@ -17,7 +17,7 @@ import { request as httpRequest, RequestOptions } from 'http';
 import { readEnvFile } from './env.js';
 import { logger } from './logger.js';
 
-export type AuthMode = 'api-key' | 'oauth';
+export type AuthMode = 'api-key' | 'oauth' | 'bedrock';
 
 export interface ProxyConfig {
   authMode: AuthMode;
@@ -32,9 +32,15 @@ export function startCredentialProxy(
     'CLAUDE_CODE_OAUTH_TOKEN',
     'ANTHROPIC_AUTH_TOKEN',
     'ANTHROPIC_BASE_URL',
+    'CLAUDE_CODE_USE_BEDROCK',
   ]);
 
-  const authMode: AuthMode = secrets.ANTHROPIC_API_KEY ? 'api-key' : 'oauth';
+  const authMode: AuthMode =
+    secrets.CLAUDE_CODE_USE_BEDROCK === '1'
+      ? 'bedrock'
+      : secrets.ANTHROPIC_API_KEY
+        ? 'api-key'
+        : 'oauth';
   const oauthToken =
     secrets.CLAUDE_CODE_OAUTH_TOKEN || secrets.ANTHROPIC_AUTH_TOKEN;
 
@@ -120,6 +126,7 @@ export function startCredentialProxy(
 
 /** Detect which auth mode the host is configured for. */
 export function detectAuthMode(): AuthMode {
-  const secrets = readEnvFile(['ANTHROPIC_API_KEY']);
+  const secrets = readEnvFile(['ANTHROPIC_API_KEY', 'CLAUDE_CODE_USE_BEDROCK']);
+  if (secrets.CLAUDE_CODE_USE_BEDROCK === '1') return 'bedrock';
   return secrets.ANTHROPIC_API_KEY ? 'api-key' : 'oauth';
 }

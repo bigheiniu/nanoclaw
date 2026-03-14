@@ -1,6 +1,8 @@
 # NanoClaw Agent Container
 # Runs Claude Agent SDK in isolated Linux VM with browser automation
 
+FROM public.ecr.aws/aws-cli/aws-cli:latest AS aws-cli
+
 FROM node:22-slim
 
 # Install system dependencies for Chromium
